@@ -4,6 +4,10 @@
 
     class PhoneMiner{
 
+        public function getNumberOfBrands($html){
+            return count($html -> find("div[class='large-6 medium-6 small-6 columns brand-box']"));
+        }
+
         public function getBrandDOM($html, $index){
             return $html -> find("div[class='large-6 medium-6 small-6 columns brand-box']", $index);
         }
@@ -29,6 +33,10 @@
         {
             $numOfModels = $brandHtml -> find("div[id='InfoLine']", 0) -> next_sibling() -> plaintext;
             return intval($numOfModels);
+        }
+
+        public function getNumberOfPhones($brandHtml){
+            return count($brandHtml -> find("div[class*='phone-item phone-item--wide']"));
         }
         
         public function getNumberOfPages($brandHtml){
@@ -59,7 +67,21 @@
         }
 
         public function getInfoValue($infoDom){
-            return $infoDom -> children(1) -> plaintext;
+
+            @$valueClass = $infoDom -> children(1) -> first_child() -> class;
+            
+            if($valueClass == "question"){
+                return "Unknown";
+            }
+            else if($valueClass == "cross"){
+                return "Nie";
+            }
+            else if($valueClass == "tick"){
+                return "Tak";
+            }
+            else{
+                return $infoDom -> children(1) -> plaintext;
+            }
         }
 
         public function getNumberOfCategory($phoneHtml){
@@ -83,11 +105,97 @@
         }
 
         public function getSpecValue($specDom){
-            return $specDom -> first_child() -> children(1) -> plaintext;
+
+            @$valueClass = $specDom -> first_child() -> children(1) -> first_child() -> class;
+            //echo $valueClass;
+
+            if($valueClass == "question"){
+                return "Unknown";
+            }
+            else if($valueClass == "cross"){
+                return "Nie";
+            }
+            else if($valueClass == "tick"){
+                return "Tak";
+            }
+            else{
+                return $specDom -> first_child() -> children(1) -> plaintext;
+            }
+
         }
 
         public function getMainInfoArr($phoneHtml){
-            
+
+            $infoArr = array();
+
+            for($i = 0 ; $i < $this -> getNumberOfInfo($phoneHtml) ; $i++){
+                
+                $infoDom = $this -> getInfoDOM($phoneHtml, $i);
+                
+                $infoName = $this -> getInfoName($infoDom);
+                $infoValue = $this -> getInfoValue($infoDom);
+
+                $infoName = trim($infoName);
+                $infoValue = trim($infoValue);
+                $infoValue = str_replace("\r\n","", $infoValue);
+
+                $infoArr[$infoName] = $infoValue;
+                
+            }
+
+            return $infoArr;
+
+        }
+
+        public function getSpecArr($phoneHtml, $index){
+
+            $specArr = array();
+
+            $categoryDom = $this ->getCategoryDOM($phoneHtml, $index);
+
+            for($i = 0 ; $i < $this -> getNumberOfSpec($categoryDom);$i++){
+                $specDom = $this -> getSpecDOM($categoryDom, $i);
+
+                $specName = $this -> getSpecName($specDom);
+                $specValue = $this -> getSpecValue($specDom);
+
+                $specName = trim($specName);
+                $specValue = trim($specValue);
+
+                $specArr[$specName] = $specValue;
+            }
+
+            return $specArr;
+
+        }
+
+        public function getAllSpecArr($phoneHtml){
+
+            $allSpecArr = array();
+
+            for($i = 0 ;  $i < $this -> getNumberOfCategory($phoneHtml) ; $i++){
+
+                $infoSpecArr = $this -> getSpecArr($phoneHtml, $i);
+
+                $allSpecArr = array_merge($allSpecArr , $infoSpecArr);
+            }
+
+            return $allSpecArr;
+
+        }
+
+        public function getAllInfo($phoneHtml){
+
+            $allInfoArr = array();
+
+            $mainArr = $this -> getMainInfoArr($phoneHtml);
+            $infoArr = $this -> getAllSpecArr($phoneHtml);
+
+            $allInfoArr = array_merge($allInfoArr, $mainArr);
+            $allInfoArr = array_merge($allInfoArr, $infoArr);
+
+            return $allInfoArr;
+
         }
 
     }
