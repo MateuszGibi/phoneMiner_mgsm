@@ -84,6 +84,22 @@
             }
         }
 
+        public function getProducerInfo($phoneHtml){
+            $infoDom = $this -> getInfoDOM($phoneHtml, 0);
+                
+            $infoName = $this -> getInfoName($infoDom);
+            $infoValue = $this -> getInfoValue($infoDom);
+            $infoName = trim($infoName);
+            $infoValue = trim($infoValue);
+            $infoValue = str_replace("\r\n","", $infoValue);
+
+            $infoValue = substr($infoValue, -strpos($infoValue, "Zobacz"));
+
+            $producerInfo = array();
+            $producerInfo[$infoName] = $infoValue;
+            return $producerInfo;
+        }
+
         public function getNumberOfCategory($phoneHtml){
             return count($phoneHtml -> find("ul[class='PhoneData YesDict']"));
         }
@@ -128,7 +144,9 @@
 
             $infoArr = array();
 
-            for($i = 0 ; $i < $this -> getNumberOfInfo($phoneHtml) ; $i++){
+            $infoArr = array_merge($infoArr, $this -> getProducerInfo($phoneHtml));
+
+            for($i = 1 ; $i < $this -> getNumberOfInfo($phoneHtml) ; $i++){
                 
                 $infoDom = $this -> getInfoDOM($phoneHtml, $i);
                 
@@ -142,6 +160,8 @@
                 $infoArr[$infoName] = $infoValue;
                 
             }
+
+            $infoArr["Standardy"] = str_replace("czytaj więcej", "", $infoArr["Standardy"]);
 
             return $infoArr;
 

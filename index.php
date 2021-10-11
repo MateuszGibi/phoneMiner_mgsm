@@ -12,7 +12,7 @@
     $finalPhoneArr = array();
 
     //Loop to go through all brands
-    for($i = 0 ; $i < $brandsNum ; $i++){
+    for($i = 2 ; $i < $brandsNum ; $i++){
 
         //Get html of brand to get number of available pages to scrap
         $brandHtml = $miner -> getBrandHTML($html, $i);
