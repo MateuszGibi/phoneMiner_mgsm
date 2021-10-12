@@ -18,7 +18,6 @@
 
         public function getBrandLink($brandDOM){
             $brandHref = $this -> getBrandHref($brandDOM);
-
             return "https://www.mgsm.pl" . $brandHref;
         }
 
@@ -67,9 +66,12 @@
         }
 
         public function getInfoValue($infoDom){
-
+            
+            //@ is for hide any warnings if value dont have class name
             @$valueClass = $infoDom -> children(1) -> first_child() -> class;
             
+            //Some values are listed as image
+            //To know witch string we need to return, we check name of value's class
             if($valueClass == "question"){
                 return "Unknown";
             }
@@ -89,10 +91,13 @@
                 
             $infoName = $this -> getInfoName($infoDom);
             $infoValue = $this -> getInfoValue($infoDom);
+
+            //Remove all unnecessary spaces and tags
             $infoName = trim($infoName);
             $infoValue = trim($infoValue);
             $infoValue = str_replace("\r\n","", $infoValue);
 
+            //Remove unnecessary substring from producer name
             $infoValue = substr($infoValue, -strpos($infoValue, "Zobacz"));
 
             $producerInfo = array();
@@ -122,9 +127,11 @@
 
         public function getSpecValue($specDom){
 
+            //@ is for hide any warnings if value dont have class name
             @$valueClass = $specDom -> first_child() -> children(1) -> first_child() -> class;
-            //echo $valueClass;
 
+            //Some values are listed as image
+            //To know witch string we need to return, we check name of value's class
             if($valueClass == "question"){
                 return "Unknown";
             }
@@ -144,8 +151,10 @@
 
             $infoArr = array();
 
+            //Add producer info to array
             $infoArr = array_merge($infoArr, $this -> getProducerInfo($phoneHtml));
 
+            //Loop to go through all information in main section
             for($i = 1 ; $i < $this -> getNumberOfInfo($phoneHtml) ; $i++){
                 
                 $infoDom = $this -> getInfoDOM($phoneHtml, $i);
@@ -153,6 +162,7 @@
                 $infoName = $this -> getInfoName($infoDom);
                 $infoValue = $this -> getInfoValue($infoDom);
 
+                //Remove all unnecessary spaces and tags
                 $infoName = trim($infoName);
                 $infoValue = trim($infoValue);
                 $infoValue = str_replace("\r\n","", $infoValue);
@@ -161,6 +171,7 @@
                 
             }
 
+            //Remove unnecessary substring from information about standards
             $infoArr["Standardy"] = str_replace("czytaj więcej", "", $infoArr["Standardy"]);
 
             return $infoArr;
@@ -173,12 +184,14 @@
 
             $categoryDom = $this ->getCategoryDOM($phoneHtml, $index);
 
+            //Loop to go through all spec information in category of given index 
             for($i = 0 ; $i < $this -> getNumberOfSpec($categoryDom);$i++){
                 $specDom = $this -> getSpecDOM($categoryDom, $i);
 
                 $specName = $this -> getSpecName($specDom);
                 $specValue = $this -> getSpecValue($specDom);
 
+                //Remove all unnecessary spaces and tags
                 $specName = trim($specName);
                 $specValue = trim($specValue);
 
@@ -193,6 +206,7 @@
 
             $allSpecArr = array();
 
+            //Loop to go through all categories           
             for($i = 0 ;  $i < $this -> getNumberOfCategory($phoneHtml) ; $i++){
 
                 $infoSpecArr = $this -> getSpecArr($phoneHtml, $i);
@@ -211,6 +225,7 @@
             $mainArr = $this -> getMainInfoArr($phoneHtml);
             $infoArr = $this -> getAllSpecArr($phoneHtml);
 
+            //Merge all arrays to one
             $allInfoArr = array_merge($allInfoArr, $mainArr);
             $allInfoArr = array_merge($allInfoArr, $infoArr);
 
