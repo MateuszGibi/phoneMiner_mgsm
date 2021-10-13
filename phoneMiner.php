@@ -12,7 +12,7 @@
             return $html -> find("div[class='large-6 medium-6 small-6 columns brand-box']", $index);
         }
 
-        public function getBrandHref($brandDOM){
+        private function getBrandHref($brandDOM){
             return $brandDOM -> first_child() -> first_child() -> href;
         }
 
@@ -28,7 +28,7 @@
             return file_get_html($brandLink);
         }
 
-        public function getNumberOfModels($brandHtml)
+        private function getNumberOfModels($brandHtml)
         {
             $numOfModels = $brandHtml -> find("div[id='InfoLine']", 0) -> next_sibling() -> plaintext;
             return intval($numOfModels);
@@ -49,23 +49,23 @@
             return "https://www.mgsm.pl" . $phoneHref;
         }
 
-        public function getMainDOM($phoneHtml){
+        private function getMainDOM($phoneHtml){
             return $phoneHtml -> find("table[class='PhoneData YesDict']", 0);
         }
 
-        public function getNumberOfInfo($phoneHtml){
+        private function getNumberOfInfo($phoneHtml){
             return count($phoneHtml -> find("table[class='PhoneData YesDict']", 0)  -> find("tr"));
         }
 
-        public function getInfoDOM($phoneHtml, $index){
+        private function getInfoDOM($phoneHtml, $index){
             return $phoneHtml -> find("table[class='PhoneData YesDict']", 0)  -> find("tr", $index);
         }
 
-        public function getInfoName($infoDom){
+        private function getInfoName($infoDom){
             return $infoDom -> children(0) -> plaintext;
         }
 
-        public function getInfoValue($infoDom){
+        private function getInfoValue($infoDom){
             
             //@ is for hide any warnings if value dont have class name
             @$valueClass = $infoDom -> children(1) -> first_child() -> class;
@@ -86,7 +86,7 @@
             }
         }
 
-        public function getProducerInfo($phoneHtml){
+        private function getProducerInfo($phoneHtml){
             $infoDom = $this -> getInfoDOM($phoneHtml, 0);
                 
             $infoName = $this -> getInfoName($infoDom);
@@ -105,27 +105,27 @@
             return $producerInfo;
         }
 
-        public function getNumberOfCategory($phoneHtml){
+        private function getNumberOfCategory($phoneHtml){
             return count($phoneHtml -> find("ul[class='PhoneData YesDict']"));
         }
 
-        public function getCategoryDOM($phoneHtml, $index){
+        private function getCategoryDOM($phoneHtml, $index){
             return $phoneHtml -> find("ul[class='PhoneData YesDict']", $index);
         }
 
-        public function getNumberOfSpec($categoryDom){
+        private function getNumberOfSpec($categoryDom){
             return count($categoryDom -> find("li[!class][!style]"));
         }
 
-        public function getSpecDOM($categoryDom, $index){
+        private function getSpecDOM($categoryDom, $index){
             return $categoryDom -> find("li[!class][!style]", $index);
         }
 
-        public function getSpecName($specDom){
+        private function getSpecName($specDom){
             return $specDom -> first_child() -> children(0) -> plaintext;
         }
 
-        public function getSpecValue($specDom){
+        private function getSpecValue($specDom){
 
             //@ is for hide any warnings if value dont have class name
             @$valueClass = $specDom -> first_child() -> children(1) -> first_child() -> class;
@@ -147,7 +147,7 @@
 
         }
 
-        public function getMainInfoArr($phoneHtml){
+        private function getMainInfoArr($phoneHtml){
 
             $infoArr = array();
 
@@ -178,7 +178,7 @@
 
         }
 
-        public function getSpecArr($phoneHtml, $index){
+        private function getSpecArr($phoneHtml, $index){
 
             $specArr = array();
 
@@ -202,7 +202,7 @@
 
         }
 
-        public function getAllSpecArr($phoneHtml){
+        private function getAllSpecArr($phoneHtml){
 
             $allSpecArr = array();
 
